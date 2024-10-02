@@ -1,9 +1,9 @@
 /*
-* CUSTOMIZATIONS:
-* - usati i componenti di design-react-kit
-* - disabilitato il captcha se nelle siteProperties del config è stato disabilitato.
-* - aggiunta legenda per i campi obbligatori
-*/
+ * CUSTOMIZATIONS:
+ * - usati i componenti di design-react-kit
+ * - disabilitato il captcha se nelle siteProperties del config è stato disabilitato.
+ * - aggiunta legenda per i campi obbligatori
+ */
 import React from 'react';
 import { useIntl, defineMessages } from 'react-intl';
 import { Card, CardBody, Row, Col, Alert, Progress } from 'design-react-kit';
@@ -210,47 +210,51 @@ const FormView = ({
                   })}
 
                   {/*OTP*/}
-                  {data.subblocks
-                    .filter((subblock) => subblock.use_as_bcc)
-                    .map((subblock, index) => {
-                      const fieldName = getFieldName(
-                        subblock.label,
-                        subblock.id,
-                      );
-                      const name = fieldName + OTP_FIELDNAME_EXTENDER;
-                      const fieldValue = formData[fieldName]?.value;
-                      const value = formData[fieldName]?.otp;
-                      const fields_to_send_with_value =
-                        getFieldsToSendWithValue(subblock);
+                  {data.email_otp_verification ? (
+                    data.subblocks
+                      .filter((subblock) => subblock.use_as_bcc)
+                      .map((subblock, index) => {
+                        const fieldName = getFieldName(
+                          subblock.label,
+                          subblock.id,
+                        );
+                        const name = fieldName + OTP_FIELDNAME_EXTENDER;
+                        const fieldValue = formData[fieldName]?.value;
+                        const value = formData[fieldName]?.otp;
+                        const fields_to_send_with_value =
+                          getFieldsToSendWithValue(subblock);
 
-                      return (
-                        <Row key={'row_otp' + index}>
-                          <Col className="py-2">
-                            <OTPWidget
-                              {...subblock}
-                              fieldValue={fieldValue}
-                              onChange={(field, value) => {
-                                onChangeFormData(
-                                  subblock.id,
-                                  fieldName,
-                                  fieldValue,
-                                  {
-                                    ...fields_to_send_with_value,
-                                    otp: value,
-                                  },
-                                );
-                              }}
-                              value={value}
-                              valid={isValidField(name)}
-                              errorMessage={getErrorMessage(name)}
-                              formHasErrors={formErrors?.length > 0}
-                              path={path}
-                              block_id={block_id}
-                            />
-                          </Col>
-                        </Row>
-                      );
-                    })}
+                        return (
+                          <Row key={'row_otp' + index}>
+                            <Col className="py-2">
+                              <OTPWidget
+                                {...subblock}
+                                fieldValue={fieldValue}
+                                onChange={(field, value) => {
+                                  onChangeFormData(
+                                    subblock.id,
+                                    fieldName,
+                                    fieldValue,
+                                    {
+                                      ...fields_to_send_with_value,
+                                      otp: value,
+                                    },
+                                  );
+                                }}
+                                value={value}
+                                valid={isValidField(name)}
+                                errorMessage={getErrorMessage(name)}
+                                formHasErrors={formErrors?.length > 0}
+                                path={path}
+                                block_id={block_id}
+                              />
+                            </Col>
+                          </Row>
+                        );
+                      })
+                  ) : (
+                    <></>
+                  )}
 
                   {enableCaptcha && <>{captcha.render()}</>}
 

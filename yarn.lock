@@ -8373,7 +8373,7 @@ __metadata:
     stylelint-prettier: 4.0.2
   peerDependencies:
     "@plone/volto": ^17.0.0
-    volto-form-block: ^3.9.0
+    volto-form-block: ^3.9.3
   languageName: unknown
   linkType: soft
 
