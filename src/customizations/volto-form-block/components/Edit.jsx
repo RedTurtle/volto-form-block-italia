@@ -86,7 +86,7 @@ class Edit extends SubblocksEdit {
             this.props.onChangeBlock(this.props.block, data);
           }}
         >
-          <div className="px-4 py-5">
+          <div className="py-5">
             {this.props?.data?.title && <h2>{this.props.data.title}</h2>}
             {this.props?.data?.description && (
               <div className="block-description">
