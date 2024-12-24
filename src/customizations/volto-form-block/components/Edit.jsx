@@ -20,7 +20,7 @@ import {
   SubblocksWrapper,
 } from 'volto-subblocks';
 
-import { SidebarPortal } from '@plone/volto/components/manage/Sidebar/SidebarPortal';
+import SidebarPortal from '@plone/volto/components/manage/Sidebar/SidebarPortal';
 
 import { defineMessages } from 'react-intl';
 
