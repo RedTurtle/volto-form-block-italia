@@ -54,6 +54,13 @@
 }
 
 .block.form {
+  .dt-actions .ui.button {
+    width: auto;
+    .icon {
+      height: 1rem !important;
+    }
+  }
+
   .block-description {
     margin-bottom: 1rem;
   }
@@ -274,4 +281,14 @@
 
 .grecaptcha-badge {
   bottom: 115px !important;
+}
+
+.modal_visibility_conditions {
+  .ui.button.choice-delete {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem;
+    margin: 0;
+    text-align: center;
+  }
 }

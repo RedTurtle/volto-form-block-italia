@@ -17,6 +17,7 @@ import {
   Button,
 } from 'volto-form-block/components/Widget';
 import { FormResult } from 'volto-form-block/components';
+import { evaluateAllConditions } from 'volto-form-block/helpers/conditions-list';
 // eslint-disable-next-line import/no-unresolved
 import config from '@plone/volto/registry';
 
@@ -178,10 +179,14 @@ const FormView = ({
                   )}
                   {data.subblocks.map((subblock, index) => {
                     let name = getFieldName(subblock.label, subblock.id);
+
                     const fields_to_send_with_value =
                       getFieldsToSendWithValue(subblock);
 
-                    return (
+                    return evaluateAllConditions(
+                      subblock?.visibility_conditions,
+                      formData,
+                    ) ? (
                       <Row key={'row' + index}>
                         <Col className="py-2">
                           <Field
@@ -206,6 +211,8 @@ const FormView = ({
                           />
                         </Col>
                       </Row>
+                    ) : (
+                      <></>
                     );
                   })}
 

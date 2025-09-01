@@ -21,6 +21,9 @@
     "release-alpha": "release-it --preRelease=alpha",
     "release-rc": "release-it --preRelease=rc"
   },
+  "dependencies": {
+    "volto-form-block": "3.13.0"
+  },
   "devDependencies": {
     "@babel/eslint-parser": "7.22.15",
     "@plone/scripts": "^3.3.2",
@@ -44,6 +47,6 @@
   },
   "peerDependencies": {
     "@plone/volto": "^17.0.0",
-    "volto-form-block": "^3.10.0"
+    "volto-form-block": "^3.13.0"
   }
 }

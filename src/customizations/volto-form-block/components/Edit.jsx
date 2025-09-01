@@ -10,7 +10,10 @@ import React from 'react';
 // eslint-disable-next-line import/no-unresolved
 import EditBlock from 'volto-form-block/components/EditBlock';
 // eslint-disable-next-line import/no-unresolved
+import { TabPane, Tab } from 'semantic-ui-react';
+
 import Sidebar from 'volto-form-block/components/Sidebar';
+import DataTable from 'volto-form-block/components/DataTable';
 import ValidateConfigForm from 'volto-form-block/components/ValidateConfigForm';
 
 import { Card, CardBody, Button, Row, Col } from 'design-react-kit';
@@ -45,6 +48,11 @@ const messages = defineMessages({
     id: 'form_edit_warning_from',
     defaultMessage:
       'Inserire un campo di tipo "E-mail mittente". Se non è presente, oppure è presente ma non viene compilato dall\'utente, l\'indirizzo del mittente della mail sarà quello configurato dalla sidebar di destra.',
+  },
+  warning_enable_save: {
+    id: 'warning_enable_save',
+    defaultMessage:
+      'Seleziona l\'opzione "Salva i dati" nella barra laterale destra per abilitare il salvataggio e la visualizzazione dei dati inviati.',
   },
 });
 
@@ -106,44 +114,81 @@ class Edit extends SubblocksEdit {
                   </Alert>
                 )*/}
 
-                  {this.state.subblocks.map((subblock, subindex) => (
-                    <div className="form-field" key={subblock.id}>
-                      <EditBlock
-                        data={subblock}
-                        index={subindex}
-                        selected={this.isSubblockSelected(subindex)}
-                        {...this.subblockProps}
-                        openObjectBrowser={this.props.openObjectBrowser}
-                      />
-                    </div>
-                  ))}
+                  <Tab
+                    panes={[
+                      {
+                        menuItem: 'Form',
+                        render: () => (
+                          <TabPane>
+                            {this.state.subblocks.map((subblock, subindex) => (
+                              <div className="form-field" key={subblock.id}>
+                                <EditBlock
+                                  data={subblock}
+                                  index={subindex}
+                                  selected={this.isSubblockSelected(subindex)}
+                                  {...this.subblockProps}
+                                  openObjectBrowser={
+                                    this.props.openObjectBrowser
+                                  }
+                                />
+                              </div>
+                            ))}
 
-                  {this.props.selected && (
-                    <div className="form-field">
-                      {this.renderAddBlockButton(
-                        this.props.intl.formatMessage(messages.addField),
-                      )}
-                    </div>
-                  )}
-
-                  <Row>
-                    <Col align="center">
-                      {this.props.data?.show_cancel && (
-                        <Button color="secondary" className="me-2">
-                          {this.props.data.cancel_label ||
-                            this.props.intl.formatMessage(
-                              messages.default_cancel_label,
+                            {this.props.selected && (
+                              <div className="form-field">
+                                {this.renderAddBlockButton(
+                                  this.props.intl.formatMessage(
+                                    messages.addField,
+                                  ),
+                                )}
+                              </div>
                             )}
-                        </Button>
-                      )}
-                      <Button color="primary">
-                        {this.props.data.submit_label ||
-                          this.props.intl.formatMessage(
-                            messages.default_submit_label,
-                          )}
-                      </Button>
-                    </Col>
-                  </Row>
+
+                            <Row>
+                              <Col align="center">
+                                {this.props.data?.show_cancel && (
+                                  <Button color="secondary" className="me-2">
+                                    {this.props.data.cancel_label ||
+                                      this.props.intl.formatMessage(
+                                        messages.default_cancel_label,
+                                      )}
+                                  </Button>
+                                )}
+                                <Button color="primary">
+                                  {this.props.data.submit_label ||
+                                    this.props.intl.formatMessage(
+                                      messages.default_submit_label,
+                                    )}
+                                </Button>
+                              </Col>
+                            </Row>
+                          </TabPane>
+                        ),
+                      },
+                      {
+                        menuItem: 'Data',
+                        render: () => (
+                          <TabPane className="container">
+                            {this.props.data.store ? (
+                              <DataTable
+                                properties={this.props.properties}
+                                blockId={this.props.block}
+                                removeDataAfterDays={
+                                  this.props.data.remove_data_after_days
+                                }
+                              />
+                            ) : (
+                              <p>
+                                {this.props.intl.formatMessage(
+                                  messages.warning_enable_save,
+                                )}
+                              </p>
+                            )}
+                          </TabPane>
+                        ),
+                      },
+                    ]}
+                  />
                 </SubblocksWrapper>
               </CardBody>
             </Card>
