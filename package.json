@@ -25,7 +25,7 @@
     "volto-form-block"
   ],
   "dependencies": {
-    "volto-form-block": "3.13.0"
+    "volto-form-block": "3.18.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.22.15",

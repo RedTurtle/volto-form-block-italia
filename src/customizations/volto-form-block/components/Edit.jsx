@@ -26,6 +26,7 @@ import {
 import SidebarPortal from '@plone/volto/components/manage/Sidebar/SidebarPortal';
 
 import { defineMessages } from 'react-intl';
+import config from '@plone/volto/registry';
 
 const messages = defineMessages({
   addField: {
@@ -53,6 +54,14 @@ const messages = defineMessages({
     id: 'warning_enable_save',
     defaultMessage:
       'Seleziona l\'opzione "Salva i dati" nella barra laterale destra per abilitare il salvataggio e la visualizzazione dei dati inviati.',
+  },
+  form: {
+    id: 'Form',
+    defaultMessage: 'Form',
+  },
+  data: {
+    id: 'Data',
+    defaultMessage: 'data',
   },
 });
 
@@ -84,6 +93,9 @@ class Edit extends SubblocksEdit {
     if (__SERVER__) {
       return <div />;
     }
+
+    const datatableEnabled =
+      config.blocks.blocksConfig.form.enableDatatableView;
 
     return (
       <div className="public-ui">
@@ -117,7 +129,7 @@ class Edit extends SubblocksEdit {
                   <Tab
                     panes={[
                       {
-                        menuItem: 'Form',
+                        menuItem: this.props.intl.formatMessage(messages.form),
                         render: () => (
                           <TabPane>
                             {this.state.subblocks.map((subblock, subindex) => (
@@ -165,28 +177,34 @@ class Edit extends SubblocksEdit {
                           </TabPane>
                         ),
                       },
-                      {
-                        menuItem: 'Data',
-                        render: () => (
-                          <TabPane className="container">
-                            {this.props.data.store ? (
-                              <DataTable
-                                properties={this.props.properties}
-                                blockId={this.props.block}
-                                removeDataAfterDays={
-                                  this.props.data.remove_data_after_days
-                                }
-                              />
-                            ) : (
-                              <p>
-                                {this.props.intl.formatMessage(
-                                  messages.warning_enable_save,
-                                )}
-                              </p>
-                            )}
-                          </TabPane>
-                        ),
-                      },
+                      ...(datatableEnabled
+                        ? [
+                            {
+                              menuItem: this.props.intl.formatMessage(
+                                messages.data,
+                              ),
+                              render: () => (
+                                <TabPane className="container">
+                                  {this.props.data.store ? (
+                                    <DataTable
+                                      properties={this.props.properties}
+                                      blockId={this.props.block}
+                                      removeDataAfterDays={
+                                        this.props.data.remove_data_after_days
+                                      }
+                                    />
+                                  ) : (
+                                    <p>
+                                      {this.props.intl.formatMessage(
+                                        messages.warning_enable_save,
+                                      )}
+                                    </p>
+                                  )}
+                                </TabPane>
+                              ),
+                            },
+                          ]
+                        : []),
                     ]}
                   />
                 </SubblocksWrapper>

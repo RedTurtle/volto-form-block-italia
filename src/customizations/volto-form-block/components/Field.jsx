@@ -15,8 +15,6 @@ import { TextBlockView } from '@plone/volto-slate/blocks/Text';
 
 import config from '@plone/volto/registry';
 
-
-
 const messages = defineMessages({
   select_a_value: {
     id: 'form_select_a_value',
@@ -58,7 +56,7 @@ const Field = ({
   description,
   name,
   field_type,
-  required,
+  field_id,
   input_values,
   value,
   onChange,
@@ -69,12 +67,15 @@ const Field = ({
   errorMessage,
   id,
   reactSelect,
+  ...props
 }) => {
+  const required = props[`required-${field_id}`];
   const intl = useIntl();
   const Select = reactSelect.default;
   const FileWidget =
     config.settings?.['volto-form-block-italia']?.FileWidgetComponent;
-  const TextEditorWidget = config.settings?.['volto-form-block-italia']?.TextEditorWidgetComponent;
+  const TextEditorWidget =
+    config.settings?.['volto-form-block-italia']?.TextEditorWidgetComponent;
   const fromHtml = config.settings?.['volto-form-block-italia']?.fromHtml;
 
   const [selected, setSelected] = useState(false);
@@ -138,6 +139,22 @@ const Field = ({
             onChange(name, e.target.value);
           }}
           value={value ?? undefined}
+        />
+      )}
+      {field_type === 'number' && (
+        <Input
+          id={name}
+          name={name}
+          label={getLabel()}
+          type="number"
+          required={required}
+          infoText={infoText}
+          disabled={disabled}
+          readOnly={disabled}
+          invalid={isInvalid() ? 'true' : null}
+          onChange={(e) => {
+            onChange(name, e.target.value);
+          }}
         />
       )}
       {field_type === 'select' && (
