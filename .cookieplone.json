@@ -1,0 +1,13 @@
+{
+    "title": "Volto Form Block Italia",
+    "description": "Italian (AGID / Bootstrap Italia) layout for volto-form-block",
+    "project_slug": "volto-form-block-italia",
+    "author": "RedTurtle",
+    "email": "info@redturtle.it",
+    "python_package_name": "design.plone.formblock",
+    "npm_package_name": "volto-form-block-italia",
+    "github_organization": "RedTurtle",
+    "container_registry": "github",
+    "initialize_documentation": "false",
+    "__template__": "monorepo_addon"
+}

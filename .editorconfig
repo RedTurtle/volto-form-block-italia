@@ -1,5 +1,6 @@
+
 # EditorConfig Configurtaion file, for more details see:
-# http://EditorConfig.org
+# https://EditorConfig.org
 # EditorConfig is a convention description, that could be interpreted
 # by multiple editors to enforce common coding conventions for specific
 # file types
@@ -23,7 +24,7 @@ indent_style = space
 # 4 space indentation
 indent_size = 4
 
-[*.{html,dtml,pt,zpt,xml,zcml,js,jsx,json,less,css,yaml,yml}]
+[*.{html,dtml,pt,zpt,xml,zcml,js,json,ts,less,scss,css,sass,yml,yaml}]
 # 2 space indentation
 indent_size = 2
 
