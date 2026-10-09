@@ -1,0 +1,72 @@
+# Changelog
+
+<!-- You should *NOT* be adding new change log entries to this file.
+     You should create a file in the news directory instead.
+     For helpful instructions, please see:
+     https://6.docs.plone.org/contributing/index.html#contributing-change-log-label
+-->
+
+<!-- towncrier release notes start -->
+
+## [v1.1.2](https://github.com/RedTurtle/volto-form-block-italia/compare/v1.1.1...v1.1.2)
+
+- chore: updated to volto-form-block 3.18.0 [`6603da6`](https://github.com/RedTurtle/volto-form-block-italia/commit/6603da6ffeb8adc0dd9a6a3b44f0b80126cfa453)
+
+## [v1.1.1](https://github.com/RedTurtle/volto-form-block-italia/compare/v1.1.0...v1.1.1)
+
+> 1 September 2025
+
+- Release 1.1.1 [`4e91d50`](https://github.com/RedTurtle/volto-form-block-italia/commit/4e91d50bb12349472dda0d58df436082b037d370)
+- fix: dependencies [`8bf25ac`](https://github.com/RedTurtle/volto-form-block-italia/commit/8bf25ac93a7270f2cd4b2abf5881c8700bff9038)
+
+## [v1.1.0](https://github.com/RedTurtle/volto-form-block-italia/compare/v1.0.5...v1.1.0)
+
+> 1 September 2025
+
+- chore: updated volto-form-block to 3.13.0 [`be789c9`](https://github.com/RedTurtle/volto-form-block-italia/commit/be789c9377bd591613b82ecfdb7e8d7791b8a277)
+- Release 1.1.0 [`6db6b4e`](https://github.com/RedTurtle/volto-form-block-italia/commit/6db6b4eddf6a3af4eccf86a5c501d472b7e0ac83)
+
+## [v1.0.5](https://github.com/RedTurtle/volto-form-block-italia/compare/v1.0.4...v1.0.5)
+
+> 24 December 2024
+
+- Release 1.0.5 [`8a626be`](https://github.com/RedTurtle/volto-form-block-italia/commit/8a626be66044b56b8a48e71ca41d8c37804c852a)
+- fix: imports [`c0aebd2`](https://github.com/RedTurtle/volto-form-block-italia/commit/c0aebd2f7fff2ac897950b35cd9903d277e4799d)
+
+## [v1.0.4](https://github.com/RedTurtle/volto-form-block-italia/compare/v1.0.3...v1.0.4)
+
+> 24 December 2024
+
+- Release 1.0.4 [`30e6095`](https://github.com/RedTurtle/volto-form-block-italia/commit/30e609566803952a16446327afd1eb9a178c0bb8)
+- chore: removed imports from volto barrel files [`01fdc2f`](https://github.com/RedTurtle/volto-form-block-italia/commit/01fdc2f69f06b734c737a54f32982556cba575bd)
+
+## [v1.0.3](https://github.com/RedTurtle/volto-form-block-italia/compare/v1.0.2...v1.0.3)
+
+> 29 October 2024
+
+- Release 1.0.3 [`2380f56`](https://github.com/RedTurtle/volto-form-block-italia/commit/2380f5632d1b0c905b4383bbfc5f0e3ce6074cc8)
+- fix: view classes [`a09b018`](https://github.com/RedTurtle/volto-form-block-italia/commit/a09b018a24ae3a08cb6cd0b43d0a3f8dbc6a2e66)
+
+## [v1.0.2](https://github.com/RedTurtle/volto-form-block-italia/compare/v1.0.1...v1.0.2)
+
+> 29 October 2024
+
+- Release 1.0.2 [`fc64887`](https://github.com/RedTurtle/volto-form-block-italia/commit/fc64887844afe9850c284bc2862031fa13bb91f1)
+- fix: edit classes [`e6a1a8f`](https://github.com/RedTurtle/volto-form-block-italia/commit/e6a1a8fa15dea3e89083b40b0aacf3ba39bb5542)
+
+## [v1.0.1](https://github.com/RedTurtle/volto-form-block-italia/compare/v1.0.0...v1.0.1)
+
+> 3 October 2024
+
+- fix: email otp verification switchable [`#1`](https://github.com/RedTurtle/volto-form-block-italia/pull/1)
+- Release 1.0.1 [`45e1a25`](https://github.com/RedTurtle/volto-form-block-italia/commit/45e1a25aca41596b7a222a23be1357b842ab0ba5)
+
+## v1.0.0
+
+> 20 June 2024
+
+- feat: Italia volto-form-block customizations [`47f7972`](https://github.com/RedTurtle/volto-form-block-italia/commit/47f7972c99fd4423ab887e5452fcb1c105d7ce6d)
+- choere: added locales [`b887b8e`](https://github.com/RedTurtle/volto-form-block-italia/commit/b887b8ea0561ff3063a431f2258833a5bb5cc163)
+- Release 1.0.0 [`630ef4e`](https://github.com/RedTurtle/volto-form-block-italia/commit/630ef4ec881583d0c5a4a6ba283907bffe27c09f)
+- chore: fix version for release [`ec32119`](https://github.com/RedTurtle/volto-form-block-italia/commit/ec32119443e8ce1bc181a40c27f56800f02ec4ab)
+- chore: updated yarn lock [`7f03433`](https://github.com/RedTurtle/volto-form-block-italia/commit/7f03433e7e684fc5c2c81cb0c1180af140c1be29)

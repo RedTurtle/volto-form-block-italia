@@ -1,18 +1,28 @@
-# Yeoman Volto App development
-
 ### Defensive settings for make:
 #     https://tech.davis-hansson.com/p/make/
 SHELL:=bash
 .ONESHELL:
-.SHELLFLAGS:=-eu -o pipefail -c
+.SHELLFLAGS:=-xeu -o pipefail -O inherit_errexit -c
 .SILENT:
 .DELETE_ON_ERROR:
 MAKEFLAGS+=--warn-undefined-variables
 MAKEFLAGS+=--no-builtin-rules
 
 CURRENT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+GIT_FOLDER=$(CURRENT_DIR)/.git
 
-# Recipe snippets for reuse
+REPOSITORY_SETTINGS := $(shell uvx repoplone settings dump)
+
+PROJECT_NAME=$(shell echo '$(REPOSITORY_SETTINGS)' | jq -r '.name')
+STACK_NAME=${PROJECT_NAME}
+
+IMAGE_NAME_PREFIX := $(shell echo '$(REPOSITORY_SETTINGS)' | jq -r '.container_images_prefix')
+IMAGE_NAME_SEPARATOR := -
+IMAGE_NAME_PREFIX_WITH_SEPARATOR := $(IMAGE_NAME_PREFIX)$(IMAGE_NAME_SEPARATOR)
+
+# Environment variables to be exported
+export VOLTO_VERSION := $(shell echo '$(REPOSITORY_SETTINGS)' | jq -r '.frontend.volto_version')
+export PLONE_VERSION := $(shell echo '$(REPOSITORY_SETTINGS)' | jq -r '.backend.base_package_version')
 
 # We like colors
 # From: https://coderwall.com/p/izxssa/colored-makefile-for-golang-projects
@@ -21,131 +31,222 @@ GREEN=`tput setaf 2`
 RESET=`tput sgr0`
 YELLOW=`tput setaf 3`
 
-PLONE_VERSION=6
-VOLTO_VERSION=17.0.0
+.PHONY: all
+all: install
 
-ADDON_NAME='volto-form-block-italia'
-ADDON_PATH='volto-form-block-italia'
-COMPOSE_FILE=dockerfiles/docker-compose.yml
-ACCEPTANCE_COMPOSE=acceptance/docker-compose.yml
-CMD=CURRENT_DIR=${CURRENT_DIR} ADDON_NAME=${ADDON_NAME} ADDON_PATH=${ADDON_PATH} VOLTO_VERSION=${VOLTO_VERSION} PLONE_VERSION=${PLONE_VERSION} docker compose
-DOCKER_COMPOSE=${CMD} -p ${ADDON_PATH} -f ${COMPOSE_FILE}
-DEV_COMPOSE=COMPOSE_PROFILES=dev ${DOCKER_COMPOSE}
-LIVE_COMPOSE=COMPOSE_PROFILES=dev ${DOCKER_COMPOSE}
-ACCEPTANCE=${CMD} -p ${ADDON_PATH}-acceptance -f ${ACCEPTANCE_COMPOSE}
-
-.PHONY: build-backend
-build-backend: ## Build
-	@echo "$(GREEN)==> Build Backend Container $(RESET)"
-	${DEV_COMPOSE} build backend
-
-.PHONY: start-backend
-start-backend: ## Starts Docker backend
-	@echo "$(GREEN)==> Start Docker-based Plone Backend $(RESET)"
-	${DEV_COMPOSE} up backend -d
-
-.PHONY: stop-backend
-stop-backend: ## Stop Docker backend
-	@echo "$(GREEN)==> Stop Docker-based Plone Backend $(RESET)"
-	${DEV_COMPOSE} stop backend
-
-.PHONY: build-live
-build-live: ## Build Addon live
-	@echo "$(GREEN)==> Build Addon development container $(RESET)"
-	${LIVE_COMPOSE} build addon-live
-
-.PHONY: build-addon
-build-addon: ## Build Addon dev
-	@echo "$(GREEN)==> Build Addon development container $(RESET)"
-	${DEV_COMPOSE} build addon-dev
-
-.PHONY: start-dev
-start-dev: ## Starts Dev container
-	@echo "$(GREEN)==> Start Addon Development container $(RESET)"
-	${DEV_COMPOSE} up addon-dev backend
-
-.PHONY: dev
-dev: ## Develop the addon
-	@echo "$(GREEN)==> Start Development Environment $(RESET)"
-	make build-backend
-	make start-backend
-	make build-addon
-	make start-dev
-
+# Add the following 'help' target to your Makefile
+# And add help text after each target name starting with '\#\#'
 .PHONY: help
-help:		## Show this help.
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"
+help: ## This help message
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-## Setup the local environment
+
+.PHONY: debug-settings
+debug-settings:  ## Debug settings
+	@echo "Debug settings"
+	@echo "PROJECT_NAME: $(PROJECT_NAME)"
+	@echo "VOLTO_VERSION: $(VOLTO_VERSION)"
+	@echo "PLONE_VERSION: $(PLONE_VERSION)"
+	@echo "IMAGE_NAME_PREFIX: $(IMAGE_NAME_PREFIX)"
+	@echo "IMAGE_NAME_PREFIX_WITH_SEPARATOR: $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)"
+
+###########################################
+# Frontend
+###########################################
+.PHONY: frontend-install
+frontend-install:  ## Install React Frontend
+	$(MAKE) -C "./frontend/" install
+
+.PHONY: frontend-build
+frontend-build:  ## Build React Frontend
+	$(MAKE) -C "./frontend/" build
+
+.PHONY: frontend-start
+frontend-start:  ## Start React Frontend
+	$(MAKE) -C "./frontend/" start
+
+.PHONY: frontend-test
+frontend-test:  ## Test frontend codebase
+	@echo "Test frontend"
+	$(MAKE) -C "./frontend/" test
+
+###########################################
+# Backend
+###########################################
+.PHONY: backend-install
+backend-install:  ## Create virtualenv and install Plone
+	$(MAKE) -C "./backend/" install
+	$(MAKE) backend-create-site
+
+.PHONY: backend-build
+backend-build:  ## Build Backend
+	$(MAKE) -C "./backend/" install
+
+.PHONY: backend-create-site
+backend-create-site: ## Create a Plone site with default content
+	$(MAKE) -C "./backend/" create-site
+
+.PHONY: backend-update-example-content
+backend-update-example-content: ## Export example content inside package
+	$(MAKE) -C "./backend/" update-example-content
+
+.PHONY: backend-start
+backend-start: ## Start Plone Backend
+	$(MAKE) -C "./backend/" start
+
+.PHONY: backend-test
+backend-test:  ## Test backend codebase
+	@echo "Test backend"
+	$(MAKE) -C "./backend/" test
+
+###########################################
+# Environment
+###########################################
 .PHONY: install
-install: ## Install the local environment, Cypress, build acceptance containers
-	yarn
-	make install-acceptance
+install:  ## Install
+	@echo "Install Backend & Frontend"
+	$(MAKE) backend-install
+	$(MAKE) frontend-install
 
-# Dev Helpers
-.PHONY: i18n
-i18n: ## Sync i18n
-	@echo "$(YELLOW)==> Do not forget to setup the local environment (make install) $(RESET)"
-	yarn i18n
+.PHONY: clean
+clean:  ## Clean installation
+	@echo "Clean installation"
+	$(MAKE) -C "./backend/" clean
+	$(MAKE) -C "./frontend/" clean
 
+###########################################
+# QA
+###########################################
 .PHONY: format
-format: ## Format codebase
-	${DEV_COMPOSE} run --rm addon-dev lint:fix
-	${DEV_COMPOSE} run --rm addon-dev prettier:fix
-	${DEV_COMPOSE} run --rm addon-dev stylelint:fix
+format:  ## Format codebase
+	@echo "Format the codebase"
+	$(MAKE) -C "./backend/" format
+	$(MAKE) -C "./frontend/" format
 
 .PHONY: lint
-lint: ## Lint Codebase
-	${DEV_COMPOSE} run --rm addon-dev lint
-	${DEV_COMPOSE} run --rm addon-dev prettier
-	${DEV_COMPOSE} run --rm addon-dev stylelint --allow-empty-input
+lint:  ## Format codebase
+	@echo "Lint the codebase"
+	$(MAKE) -C "./backend/" lint
+	$(MAKE) -C "./frontend/" lint
 
+.PHONY: check
+check:  format lint ## Lint and Format codebase
+
+###########################################
+# i18n
+###########################################
+.PHONY: i18n
+i18n:  ## Update locales
+	@echo "Update locales"
+	$(MAKE) -C "./backend/" i18n
+	$(MAKE) -C "./frontend/" i18n
+
+###########################################
+# Testing
+###########################################
 .PHONY: test
-test: ## Run unit tests
-	${DEV_COMPOSE} run --rm addon-dev test --watchAll
+test:  backend-test frontend-test ## Test codebase
 
-.PHONY: test-ci
-test-ci: ## Run unit tests in CI
-	${DEV_COMPOSE} run -e CI=1 addon-dev test
+###########################################
+# Container images
+###########################################
+.PHONY: build-images
+build-images:  ## Build container images
+	@echo "Build"
+	$(MAKE) -C "./backend/" build-image
+	$(MAKE) -C "./frontend/" build-image
 
-## Acceptance
-.PHONY: install-acceptance
-install-acceptance: ## Install Cypress, build acceptance containers
-	(cd acceptance && yarn)
-	${ACCEPTANCE} --profile dev --profile prod build
+###########################################
+# Local Stack
+###########################################
+.PHONY: stack-create-site
+stack-create-site:  ## Local Stack: Create a new site
+	@echo "Create a new site in the local Docker stack"
+	@echo "(Stack must not be running already.)"
+	@docker compose -f docker-compose.yml run --build backend ./docker-entrypoint.sh create-site
 
-.PHONY: start-test-acceptance-server
-start-test-acceptance-server: ## Start acceptance server (for use it in while developing)
-	${ACCEPTANCE} --profile dev up
+.PHONY: stack-start
+stack-start:  ## Local Stack: Start Services
+	@echo "Start local Docker stack"
+	@docker compose -f docker-compose.yml up -d --build
+	@echo "Now visit: http://$(PROJECT_NAME).localhost"
 
-.PHONY: start-test-acceptance-server-prod
-start-test-acceptance-server-prod: ## Start acceptance server in prod (used by CI)
-	${ACCEPTANCE} --profile prod up -d
+.PHONY: stack-status
+stack-status:  ## Local Stack: Check Status
+	@echo "Check the status of the local Docker stack"
+	@docker compose -f docker-compose.yml ps
 
-.PHONY: test-acceptance
-test-acceptance: ## Start Cypress (for use it while developing)
-	(cd acceptance && ./node_modules/.bin/cypress open)
+.PHONY: stack-stop
+stack-stop:  ##  Local Stack: Stop Services
+	@echo "Stop local Docker stack"
+	@docker compose -f docker-compose.yml stop
 
-.PHONY: test-acceptance-headless
-test-acceptance-headless: ## Run cypress tests in CI
-	(cd acceptance && ./node_modules/.bin/cypress run)
+.PHONY: stack-rm
+stack-rm:  ## Local Stack: Remove Services and Volumes
+	@echo "Remove local Docker stack"
+	@docker compose -f docker-compose.yml down
+	@echo "Remove local volume data"
+	@docker volume rm $(PROJECT_NAME)_vol-site-data
 
-.PHONY: stop-test-acceptance-server
-stop-test-acceptance-server: ## Stop acceptance server (for use it while finished developing)
-	${ACCEPTANCE} --profile dev down
+###########################################
+# Acceptance
+###########################################
+.PHONY: acceptance-backend-start
+acceptance-backend-start:
+	@echo "Start acceptance backend"
+	$(MAKE) -C "./backend/" acceptance-backend-start
 
-.PHONY: status-test-acceptance-server
-status-test-acceptance-server: ## Status of Acceptance Server (for use it while developing)
-	${ACCEPTANCE} ps
+.PHONY: acceptance-frontend-dev-start
+acceptance-frontend-dev-start:
+	@echo "Start acceptance frontend"
+	$(MAKE) -C "./frontend/" acceptance-frontend-dev-start
 
-.PHONY: debug-frontend
-debug-frontend:  ## Run bash in the Frontend container (for debug infrastructure purposes)
-	${DEV_COMPOSE} run --entrypoint bash addon-dev
+.PHONY: acceptance-test
+acceptance-test:
+	@echo "Start acceptance tests in interactive mode"
+	$(MAKE) -C "./frontend/" acceptance-test
 
-.PHONY: pull-backend-image
-pull-backend-image:  ## Pulls and updates the backend image (for use it while developing)
-	docker pull ghcr.io/voltoslate-italia:latest
+# Build Docker images
+.PHONY: acceptance-frontend-image-build
+acceptance-frontend-image-build:
+	@echo "Build acceptance frontend image"
+	@docker build frontend -t $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)frontend:acceptance -f frontend/Dockerfile --build-arg VOLTO_VERSION=$(VOLTO_VERSION)
 
-.PHONY: release
-release:  ## Release a version of the add-on
-	yarn release
+.PHONY: acceptance-backend-image-build
+acceptance-backend-image-build:
+	@echo "Build acceptance backend image"
+	@docker build backend -t $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)backend:acceptance -f backend/Dockerfile.acceptance --build-arg PLONE_VERSION=$(PLONE_VERSION)
+
+.PHONY: acceptance-images-build
+acceptance-images-build: ## Build Acceptance frontend/backend images
+	$(MAKE) acceptance-backend-image-build
+	$(MAKE) acceptance-frontend-image-build
+
+.PHONY: acceptance-frontend-container-start
+acceptance-frontend-container-start:
+	@echo "Start acceptance frontend"
+	@docker run --rm -p 3000:3000 --name $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)frontend-acceptance --link $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)backend-acceptance:backend -e RAZZLE_API_PATH=http://localhost:55001/plone -e RAZZLE_INTERNAL_API_PATH=http://backend:55001/plone -d $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)frontend:acceptance
+
+.PHONY: acceptance-backend-container-start
+acceptance-backend-container-start:
+	@echo "Start acceptance backend"
+	@docker run --rm -p 55001:55001 --name $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)backend-acceptance -d $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)backend:acceptance
+
+.PHONY: acceptance-containers-start
+acceptance-containers-start: ## Start Acceptance containers
+	$(MAKE) acceptance-backend-container-start
+	$(MAKE) acceptance-frontend-container-start
+
+.PHONY: acceptance-containers-stop
+acceptance-containers-stop: ## Stop Acceptance containers
+	@echo "Stop acceptance containers"
+	@docker stop $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)frontend-acceptance
+	@docker stop $(IMAGE_NAME_PREFIX_WITH_SEPARATOR)backend-acceptance
+
+.PHONY: ci-acceptance-test
+ci-acceptance-test:
+	@echo "Run acceptance tests in CI mode"
+	$(MAKE) acceptance-containers-start
+	pnpm dlx wait-on --httpTimeout 20000 http-get://localhost:55001/plone http://localhost:3000
+	$(MAKE) -C "./frontend/" ci-acceptance-test
+	$(MAKE) acceptance-containers-stop

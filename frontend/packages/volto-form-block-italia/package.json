@@ -1,0 +1,55 @@
+{
+  "name": "volto-form-block-italia",
+  "version": "1.1.2",
+  "description": "Italian (AGID / Bootstrap Italia) layout for volto-form-block",
+  "main": "src/index.js",
+  "license": "MIT",
+  "keywords": [
+    "volto-addon",
+    "volto",
+    "plone",
+    "react"
+  ],
+  "author": "RedTurtle",
+  "homepage": "https://github.com/RedTurtle/volto-form-block-italia#readme",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:RedTurtle/volto-form-block-italia"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "i18n": "rm -rf build/messages && NODE_ENV=production i18n --addon",
+    "dry-release": "release-it --dry-run",
+    "release": "release-it",
+    "release-major-alpha": "release-it major --preRelease=alpha",
+    "release-alpha": "release-it --preRelease=alpha"
+  },
+  "addons": [
+    "volto-form-block"
+  ],
+  "theme": "",
+  "dependencies": {
+    "volto-form-block": "3.18.0",
+    "volto-subblocks": "^2.1.0"
+  },
+  "peerDependencies": {
+    "@plone/volto": ">=19.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "volto-form-block": "^3.13.0"
+  },
+  "devDependencies": {
+    "@plone/registry": "workspace:*",
+    "@plone/scripts": "workspace:*",
+    "@plone/types": "workspace:*",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.7.3",
+    "@testing-library/react": "^16.2.0",
+    "design-react-kit": "5.0.0-1",
+    "release-it": "^19.0.5",
+    "vitest": "^3.1.2"
+  }
+}

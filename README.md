@@ -1,168 +1,189 @@
-# volto-form-block-italia
+# Volto Form Block Italia 🚀
 
-A Volto addon that applies AGID styles for [volto-form-block](https://github.com/collective/volto-form-block).
+[![Built with Cookieplone](https://img.shields.io/badge/built%20with-Cookieplone-0083be.svg?logo=cookiecutter)](https://github.com/plone/cookieplone-templates/)
+[![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![CI](https://github.com/RedTurtle/volto-form-block-italia/actions/workflows/main.yml/badge.svg)](https://github.com/RedTurtle/volto-form-block-italia/actions/workflows/main.yml)
+
+> [!IMPORTANT]
+> **Volto < 19**: for the 1.x series of this add-on (Volto 17/18) use the [`1.x` branch](https://github.com/RedTurtle/volto-form-block-italia/tree/1.x).
+> Starting from 2.0.0, `main` targets Volto 19+ and is a Cookieplone monorepo (backend + frontend).
+
+A Volto add-on that applies AGID (Bootstrap Italia) styles to [volto-form-block](https://github.com/collective/volto-form-block).
+
+The repository contains:
+
+- `frontend/packages/volto-form-block-italia`: the Volto add-on, published on npm as `volto-form-block-italia`.
+- `backend`: the Plone backend package `design.plone.formblock`. It has no features yet.
 
 ## Usage
-- In your config set this properties with passing your functions/components to use yours.
-```js
-config.settings['volto-form-block-italia'] = {
-    IconComponent: ({icon, style, title}) => <></>,
-    FileWidgetComponent: ({ id, name,label,type,required,infoText,disabled, readOnly,invalid, onChange,onEdit,value })=><></>,
+
+The add-on expects a Bootstrap Italia based theme (for example [design-comuni-plone-theme](https://github.com/RedTurtle/design-comuni-plone-theme)), which provides `design-react-kit` and the Bootstrap Italia SCSS variables.
+
+- In your config, set these properties and pass your own functions and components.
+
+  ```js
+  config.settings['volto-form-block-italia'] = {
+    IconComponent: ({ icon, style, title }) => <></>,
+    FileWidgetComponent: ({ id, name, label, type, required, infoText, disabled, readOnly, invalid, onChange, onEdit, value }) => <></>,
     TextEditorWidgetComponent: ({ value, selected, setSelected, placeholder, showToolbar, onChangeBlock }) => <></>,
     fromHtml: (value) => null,
   };
-```
+  ```
 
-- import this file in your scss imports config.
-```scss
- @import 'volto-form-block-italia/theme/form';
-```
+- Import this file in your SCSS imports config.
+
+  ```scss
+  @import 'volto-form-block-italia/theme/form';
+  ```
+
+## Quick Start 🏁
+
+### Prerequisites ✅
+
+-   An [operating system](https://6.docs.plone.org/install/create-project-cookieplone.html#prerequisites-for-installation) that runs all the requirements mentioned.
+-   [uv](https://6.docs.plone.org/install/create-project-cookieplone.html#uv)
+-   [nvm](https://6.docs.plone.org/install/create-project-cookieplone.html#nvm)
+-   [Node.js and pnpm](https://6.docs.plone.org/install/create-project.html#node-js) 24
+-   [Make](https://6.docs.plone.org/install/create-project-cookieplone.html#make)
+-   [Git](https://6.docs.plone.org/install/create-project-cookieplone.html#git)
+-   [Docker](https://docs.docker.com/get-started/get-docker/) (optional)
 
 
+### Installation 🔧
 
-## Development
+1.  Clone this repository, then change your working directory.
 
-You can develop an add-on in isolation using the boilerplate already provided by the add-on generator.
-The project is configured to have the current add-on installed and ready to work with.
-This is useful to bootstrap an isolated environment that can be used to quickly develop the add-on or for demo purposes.
-It's also useful when testing an add-on in a CI environment.
+    ```shell
+    git clone git@github.com:RedTurtle/volto-form-block-italia.git
+    cd volto-form-block-italia
+    ```
 
-```{note}
-It's quite similar when you develop a Plone backend add-on in the Python side, and embed a ready to use Plone build (using buildout or pip) in order to develop and test the package.
-```
+2.  Install this code base.
 
-The dockerized approach performs all these actions in a custom built docker environment:
+    ```shell
+    make install
+    ```
 
-1. Generates a vanilla project using the official Volto Yo Generator (@plone/generator-volto)
-2. Configures it to use the add-on with the name stated in the `package.json`
-3. Links the root of the add-on inside the created project
 
-After that you can use the inner dockerized project, and run any standard Volto command for linting, acceptance test or unit tests using Makefile commands provided for your convenience.
+### Fire Up the Servers 🔥
 
-### Setup the environment
+1.  Create a new Plone site on your first run.
 
-Run once
+    ```shell
+    make backend-create-site
+    ```
 
-```shell
-make dev
-```
+2.  Start the backend at http://localhost:8080/.
 
-which will build and launch the backend and frontend containers.
-There's no need to build them again after doing it the first time unless something has changed from the container setup.
+    ```shell
+    make backend-start
+    ```
 
-In order to make the local IDE play well with this setup, is it required to run once `yarn` to install locally the required packages (ESlint, Prettier, Stylelint).
+3.  In a new shell session, start the frontend at http://localhost:3000/.
 
-Run
+    ```shell
+    make frontend-start
+    ```
 
-```shell
-yarn
-```
+Voila! Your Plone site should be live and kicking! 🎉
 
-### Build the containers manually
+### Local Stack Deployment 📦
 
-Run
+Deploy a local Docker Compose environment that includes the following.
 
-```shell
-make build-backend
-make build-addon
-```
+- Docker images for Backend and Frontend 🖼️
+- A stack with a Traefik router and a PostgreSQL database 🗃️
+- Accessible at [http://volto-form-block-italia.localhost](http://volto-form-block-italia.localhost) 🌐
 
-### Run the containers
-
-Run
-
-```shell
-make start-dev
-```
-
-This will start both the frontend and backend containers.
-
-### Stop Backend (Docker)
-
-After developing, in order to stop the running backend, don't forget to run:
-
-Run
+Run the following commands in a shell session.
 
 ```shell
-make stop-backend
+make stack-create-site
+make stack-start
 ```
 
-### Linting
+And... you're all set! Your Plone site is up and running locally! 🚀
 
-Run
+## Project structure 🏗️
+
+This monorepo consists of the following distinct sections:
+
+- **backend**: Houses the API and Plone installation, utilizing pip instead of buildout, and includes a policy package named design.plone.formblock.
+- **frontend**: Contains the React (Volto) package.
+
+### Why this structure? 🤔
+
+- All necessary codebases to run the site are contained within the repository (excluding existing add-ons for Plone and React).
+- Specific GitHub Workflows are triggered based on changes in each codebase (refer to .github/workflows).
+- Simplifies the creation of Docker images for each codebase.
+- Demonstrates Plone installation/setup without buildout.
+
+## Code quality assurance 🧐
+
+To check your code against quality standards, run the following shell command.
 
 ```shell
-make lint
+make check
 ```
 
-### Formatting
+### Format the codebase
 
-Run
+To format and rewrite the code base, ensuring it adheres to quality standards, run the following shell command.
 
 ```shell
 make format
 ```
 
-### i18n
+| Section | Tool | Description | Configuration |
+| --- | --- | --- | --- |
+| backend | Ruff | Python code formatting, imports sorting  | [`backend/pyproject.toml`](./backend/pyproject.toml) |
+| backend | `zpretty` | XML and ZCML formatting  | -- |
+| frontend | ESLint | Fixes most common frontend issues | [`frontend/.eslintrc.js`](.frontend/.eslintrc.js) |
+| frontend | prettier | Format JS and Typescript code  | [`frontend/.prettierrc`](.frontend/.prettierrc) |
+| frontend | Stylelint | Format Styles (css, less, sass)  | [`frontend/.stylelintrc`](.frontend/.stylelintrc) |
 
-Run
+Formatters can also be run within the `backend` or `frontend` folders.
+
+### Linting the codebase
+or `lint`:
+
+ ```shell
+make lint
+```
+
+| Section | Tool | Description | Configuration |
+| --- | --- | --- | --- |
+| backend | Ruff | Checks code formatting, imports sorting  | [`backend/pyproject.toml`](./backend/pyproject.toml) |
+| backend | Pyroma | Checks Python package metadata  | -- |
+| backend | check-python-versions | Checks Python version information  | -- |
+| backend | `zpretty` | Checks XML and ZCML formatting  | -- |
+| frontend | ESLint | Checks JS / Typescript lint | [`frontend/.eslintrc.js`](.frontend/.eslintrc.js) |
+| frontend | prettier | Check JS / Typescript formatting  | [`frontend/.prettierrc`](.frontend/.prettierrc) |
+| frontend | Stylelint | Check Styles (css, less, sass) formatting  | [`frontend/.stylelintrc`](.frontend/.stylelintrc) |
+
+Linters can be run individually within the `backend` or `frontend` folders.
+
+## Internationalization 🌐
+
+Generate translation files for Plone and Volto with ease:
 
 ```shell
 make i18n
 ```
 
-### Unit tests
+## Release 📦
 
-Run
+Releases are managed with [repoplone](https://github.com/plone/repoplone).
+Backend and frontend share the version in `version.txt`.
+Only the frontend package is published, on npm.
 
-```shell
-make test
-```
-
-### Acceptance tests
-
-Run once
+Add a change log entry for each change in the `news` folder of the package it affects (`backend/news` or `frontend/packages/volto-form-block-italia/news`).
 
 ```shell
-make install-acceptance
+uvx repoplone release --dry-run
+uvx repoplone release
 ```
 
-For starting the servers
+## Credits and acknowledgements 🙏
 
-Run
-
-```shell
-make start-test-acceptance-server
-```
-
-The frontend is run in dev mode, so development while writing tests is possible.
-
-Run
-
-```shell
-make test-acceptance
-```
-
-To run Cypress tests afterwards.
-
-When finished, don't forget to shutdown the backend server.
-
-```shell
-make stop-test-acceptance-server
-```
-
-### Release
-
-Run
-
-```shell
-make release
-```
-
-For releasing a RC version
-
-Run
-
-```shell
-make release-rc
-```
+Generated using [Cookieplone (2.0.2)](https://github.com/plone/cookieplone) and [cookieplone-templates (19d0792)](https://github.com/plone/cookieplone-templates/commit/19d07923b43f38bc80271aab3d4ea54388fa9d23) on 2026-10-09 11:39:30.564845. A special thanks to all contributors and supporters!
