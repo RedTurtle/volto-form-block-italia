@@ -4,7 +4,37 @@
 [![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![CI](https://github.com/RedTurtle/volto-form-block-italia/actions/workflows/main.yml/badge.svg)](https://github.com/RedTurtle/volto-form-block-italia/actions/workflows/main.yml)
 
-Italian (AGID / Bootstrap Italia) layout for volto-form-block
+> [!IMPORTANT]
+> **Volto < 19**: for the 1.x series of this add-on (Volto 17/18) use the [`1.x` branch](https://github.com/RedTurtle/volto-form-block-italia/tree/1.x).
+> Starting from 2.0.0, `main` targets Volto 19+ and is a Cookieplone monorepo (backend + frontend).
+
+A Volto add-on that applies AGID (Bootstrap Italia) styles to [volto-form-block](https://github.com/collective/volto-form-block).
+
+The repository contains:
+
+- `frontend/packages/volto-form-block-italia`: the Volto add-on, published on npm as `volto-form-block-italia`.
+- `backend`: the Plone backend package `design.plone.formblock`. It has no features yet.
+
+## Usage
+
+The add-on expects a Bootstrap Italia based theme (for example [design-comuni-plone-theme](https://github.com/RedTurtle/design-comuni-plone-theme)), which provides `design-react-kit` and the Bootstrap Italia SCSS variables.
+
+- In your config, set these properties and pass your own functions and components.
+
+  ```js
+  config.settings['volto-form-block-italia'] = {
+    IconComponent: ({ icon, style, title }) => <></>,
+    FileWidgetComponent: ({ id, name, label, type, required, infoText, disabled, readOnly, invalid, onChange, onEdit, value }) => <></>,
+    TextEditorWidgetComponent: ({ value, selected, setSelected, placeholder, showToolbar, onChangeBlock }) => <></>,
+    fromHtml: (value) => null,
+  };
+  ```
+
+- Import this file in your SCSS imports config.
+
+  ```scss
+  @import 'volto-form-block-italia/theme/form';
+  ```
 
 ## Quick Start 🏁
 
@@ -80,8 +110,6 @@ This monorepo consists of the following distinct sections:
 
 - **backend**: Houses the API and Plone installation, utilizing pip instead of buildout, and includes a policy package named design.plone.formblock.
 - **frontend**: Contains the React (Volto) package.
-- **devops**: Encompasses Docker stack, Ansible playbooks, and cache settings.
-- **docs**: Scaffold for writing documentation for your project.
 
 ### Why this structure? 🤔
 
@@ -141,6 +169,19 @@ Generate translation files for Plone and Volto with ease:
 
 ```shell
 make i18n
+```
+
+## Release 📦
+
+Releases are managed with [repoplone](https://github.com/plone/repoplone).
+Backend and frontend share the version in `version.txt`.
+Only the frontend package is published, on npm.
+
+Add a change log entry for each change in the `news` folder of the package it affects (`backend/news` or `frontend/packages/volto-form-block-italia/news`).
+
+```shell
+uvx repoplone release --dry-run
+uvx repoplone release
 ```
 
 ## Credits and acknowledgements 🙏

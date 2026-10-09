@@ -1,0 +1,1 @@
+Move the add-on into a Cookieplone monorepo with pnpm, and declare `volto-subblocks` as a direct dependency.

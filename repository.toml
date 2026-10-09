@@ -17,7 +17,7 @@ code_path = "src/design/plone/formblock"
 changelog = "backend/CHANGELOG.md"
 towncrier_settings = "backend/pyproject.toml"
 base_package = "Products.CMFPlone"
-publish = true
+publish = false
 
 [frontend.package]
 name = "volto-form-block-italia"
