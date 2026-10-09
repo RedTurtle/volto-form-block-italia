@@ -389,6 +389,7 @@ const Field = ({
           return [
             ...acc,
             <val.component
+              key={val.id}
               id={name}
               name={name}
               title={label}
